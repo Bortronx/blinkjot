@@ -1,6 +1,6 @@
-# Blinkjot
+# Jotdash
 
-**Jot it down in a blink.** Blinkjot is a tiny Android app for capturing
+**Jot it down in a dash.** Jotdash is a tiny Android app for capturing
 thoughts the moment you have them. Open it and tap one of three big buttons:
 
 - **Note**: the keyboard is already open, just type.
@@ -26,8 +26,8 @@ Voice notes are transcribed for you.
 
 ## Install
 
-Download `blinkjot.apk` from the
-[latest release](https://github.com/Bortronx/blinkjot/releases/latest) and open
+Download `jotdash.apk` from the
+[latest release](https://github.com/Bortronx/jotdash/releases/latest) and open
 it on your phone. Allow "Install unknown apps" for your browser. Then:
 
 1. Allow the microphone, camera and notifications.
@@ -35,11 +35,11 @@ it on your phone. Allow "Install unknown apps" for your browser. Then:
    then tap **Test connection** and **Save**.
 3. Tap **Allow background sync** if it's shown.
 
-Without a server, Blinkjot is a fully local capture app.
+Without a server, Jotdash is a fully local capture app.
 
 ## The sync server
 
-Blinkjot talks to a small HTTP/JSON sync server. That server creates the
+Jotdash talks to a small HTTP/JSON sync server. That server creates the
 Plane tasks, uploads attachments and runs speech-to-text. The API is
 documented in [docs/server-api.md](docs/server-api.md).
 
@@ -47,7 +47,7 @@ documented in [docs/server-api.md](docs/server-api.md).
 
 A browser PWA can't keep recording with the screen locked (Android Chrome
 pauses `MediaRecorder`). It also can't reliably sync in the background (iOS
-has no Background Sync API). Blinkjot is a **.NET MAUI Blazor Hybrid** app:
+has no Background Sync API). Jotdash is a **.NET MAUI Blazor Hybrid** app:
 
 - The UI is plain Blazor (Razor + CSS).
 - A few small native Android pieces handle recording and background work.
@@ -56,12 +56,12 @@ has no Background Sync API). Blinkjot is a **.NET MAUI Blazor Hybrid** app:
 
 | Path | Role |
 |------|------|
-| `Blinkjot/Components/Pages/` | Screens: Home, TaskPage, Record, Menu, Settings, AllTasks |
-| `Blinkjot/wwwroot/app.css` | The whole look, one stylesheet |
-| `Blinkjot/Services/` | `LocalStore` (JSON + files on the phone), `SyncService` (push → upload files → pull), `SettingsService` |
-| `Blinkjot/Shared/Contracts.cs` | JSON contracts shared with the server |
-| `Blinkjot/Platforms/Android/` | `Recorder` (foreground service), `BackgroundSync` (WorkManager), `Phone` (camera, permissions, battery) |
-| `build-apk.cs` / `.cmd` | Local build → `dist/blinkjot.apk` |
+| `Jotdash/Components/Pages/` | Screens: Home, TaskPage, Record, Menu, Settings, AllTasks |
+| `Jotdash/wwwroot/app.css` | The whole look, one stylesheet |
+| `Jotdash/Services/` | `LocalStore` (JSON + files on the phone), `SyncService` (push → upload files → pull), `SettingsService` |
+| `Jotdash/Shared/Contracts.cs` | JSON contracts shared with the server |
+| `Jotdash/Platforms/Android/` | `Recorder` (foreground service), `BackgroundSync` (WorkManager), `Phone` (camera, permissions, battery) |
+| `build-apk.cs` / `.cmd` | Local build → `dist/jotdash.apk` |
 | `.github/workflows/android.yml` | CI build; a `v*` tag publishes a GitHub Release |
 
 ## Build it yourself
@@ -71,8 +71,8 @@ Android SDK (Android Studio provides both).
 
 ```powershell
 dotnet workload install maui-android
-dotnet build Blinkjot/Blinkjot.csproj -t:InstallAndroidDependencies -f net10.0-android -p:AcceptAndroidSDKLicenses=True
-dotnet run build-apk.cs      # → dist/blinkjot.apk
+dotnet build Jotdash/Jotdash.csproj -t:InstallAndroidDependencies -f net10.0-android -p:AcceptAndroidSDKLicenses=True
+dotnet run build-apk.cs      # → dist/jotdash.apk
 ```
 
 `build-apk.cs` also picks up a user-local SDK in `%LOCALAPPDATA%\dotnet-maui`
@@ -82,14 +82,14 @@ if one is present (no admin rights needed).
 
 Android only installs an update if it's signed with the **same key** as the
 installed app. Release builds are signed with the key stored in the GitHub
-secrets `BLINKJOT_KEYSTORE_B64` (base64 of the keystore, key alias `blinkjot`)
-and `BLINKJOT_KEYSTORE_PASS`.
+secrets `JOTDASH_KEYSTORE_B64` (base64 of the keystore, key alias `jotdash`)
+and `JOTDASH_KEYSTORE_PASS`.
 
 To sign a local build with that key, set these environment variables before
 running `build-apk.cs`:
 
-- `BLINKJOT_KEYSTORE` = the keystore path;
-- `BLINKJOT_KEYSTORE_PASS` = its password.
+- `JOTDASH_KEYSTORE` = the keystore path;
+- `JOTDASH_KEYSTORE_PASS` = its password.
 
 Without them, the build uses your Android debug key (fine for testing).
 
