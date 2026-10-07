@@ -31,7 +31,7 @@ Voice notes are transcribed for you.
 - Background sync with Android WorkManager, plus a microphone foreground
   service so recordings survive a locked screen.
 - Settings for a server behind [Pangolin](https://github.com/fosrl/pangolin):
-  access token, Basic auth, or a custom header.
+  share link, Basic Header Auth or a custom header, plus NetBird / Wi-Fi backup addresses.
 - Big, thumb-friendly UI in the Microsoft To Do style.
 
 ## Install
@@ -47,48 +47,43 @@ it on your phone. Allow "Install unknown apps" for your browser. Then:
 
 Without a server, Jotdash is a fully local capture app.
 
-### Pangolin: account login is not HTTP Basic
+### Connecting (any one option is enough)
 
-Your Pangolin website username/password cannot authenticate Jotdash's API
-requests as HTTP Basic. For background synchronization:
+Jotdash tries the **Server address** first, then each **Backup address**, then
+addresses the server reported itself, and uses the first that answers. Easiest first:
 
-1. In Pangolin, choose the resource for your server (for this deployment,
-   `apps.bortronx.com`) and create a **Link** / share link.
-2. Copy the **Access Token Usage** token ID and token, not the browser link.
-3. In Jotdash Settings, choose **Pangolin access token**, enter both values,
-   and use `https://apps.bortronx.com/quicknotes/` as the server address.
-4. Tap **Test connection**, then **Save**.
+1. **NetBird** – with NetBird on, add the server's NetBird IP under *Backup
+   addresses* (just the IP, e.g. `100.88.174.82`) and choose **No sign-in**.
+2. **Home Wi-Fi** – tap **Find server on this Wi-Fi / VPN** (or type the LAN IP).
+3. **Pangolin Basic Header Auth** – Pangolin → Resources → the resource for
+   `apps.bortronx.com` → Authentication → *Basic Header Auth* → Edit → set a
+   username/password; enter the same in Jotdash. It is **per resource**: Basic
+   auth on Plane's resource doesn't apply here, and your Pangolin account login
+   is not Basic auth.
+4. **Pangolin share link** – Pangolin → *Share Links* → Create → resource
+   `apps.bortronx.com`; choose **Pangolin share link** and paste the link
+   (`https://<pangolin>/s/<id>.<token>`). Sent as `P-Access-Token-Id` /
+   `P-Access-Token` headers.
 
-Keep the token private. Choose an appropriate expiry; synchronization stops
-when it expires or is revoked. HTTP Basic only works with separately configured
-resource **Header Auth** credentials (or a different proxy that supports Basic).
-Do not weaken authentication on a shared resource just to bypass sign-in.
-At home, the LAN address plus **No sign-in** also works if the server is reachable;
-include the server key if configured.
-
-See Pangolin's [authentication](https://docs.pangolin.net/manage/resources/public/authentication)
-and [Links/access tokens](https://docs.pangolin.net/manage/access-control/links)
-documentation. API requests do not follow login redirects, and blocked sync
-leaves your notes and attachments queued locally.
+A bare IP becomes `http://IP:8126/quicknotes/`. After one successful connection
+the server's NetBird/LAN addresses are remembered automatically. Pangolin
+credentials are sent only to the main address or HTTPS addresses, never to
+plain-HTTP backups. Keep share links private; expiry or revocation only stops
+sync. Blocked sync never sends notes to a login page and keeps everything queued.
 
 ### Troubleshooting a connection
 
-In Settings, run **Test connection**, then long-press the error message to
-select and copy it into your support message. Failed tests/syncs include safe
-diagnostic text in the same selectable message, without extra buttons or menus.
-Reports include app/build version, platform/OS, network
-availability, auth mode, server-key presence, whether the address has the expected
-`/quicknotes/` path, HTTP status, response category, redirect presence and timing.
-They exclude credentials, URLs, response/request bodies and task/file IDs.
-The log is bounded and in memory; the next test/sync replaces it. Successful
-connections do not display diagnostics. Do not send screenshots of filled
-credential fields.
+In Settings, run **Test connection**, then **tap the result** – it is copied
+to the clipboard ("Copied – paste it anywhere"); long-press selection still
+works too. Failed tests/syncs include safe diagnostic text: app/build version,
+platform/OS, network, auth mode, which addresses were tried (main / backup N),
+HTTP status, response category, redirect presence and timing. They exclude
+credentials, URLs, bodies and task/file IDs. The log is in memory and replaced
+by the next test/sync. Don't send screenshots of filled credential fields.
 
 Being signed into Pangolin in Chrome/Samsung Internet does not sign Jotdash in.
 Browser cookies are isolated from the app's WebView and native background HTTP
-client. Do not extract or paste browser session cookies; use resource credentials
-for unattended sync instead. Browser sign-in still works for downloading the APK.
-
+client. Do not extract or paste browser session cookies.
 #### Use the Pangolin Android app instead of public-resource credentials
 
 For your own phone, a Pangolin **private resource** can avoid public-resource

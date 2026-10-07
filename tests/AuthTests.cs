@@ -73,14 +73,14 @@ internal static class AuthTests
             {
                 mode = failure;
                 string report = "";
-                string result = await SyncService.TestAsync(conn, text => report = text);
-                Check(result.Contains("account username/password is not HTTP Basic"), $"{failure}: actionable account-vs-Basic explanation.");
+                string result = (await SyncService.TestAsync(conn, text => report = text)).Message;
+                Check(result.Contains("Basic Header Auth") && result.Contains("share link"), $"{failure}: actionable account-vs-Basic explanation.");
                 Check(report.Contains("Response: HTTP"), "Diagnostics include HTTP response metadata.");
                 Check(!report.Contains("test-user") && !report.Contains("test-password") && !report.Contains("<html>"), "Diagnostics omit credentials and page contents.");
                 var settings = new SettingsService();
                 await settings.SaveAsync(conn);
                 string? error = await new SyncService(store, settings).SyncAsync();
-                Check(error?.Contains("Your tasks remain saved") == true, $"{failure}: background sync reports authentication failure.");
+                Check(error?.Contains("stay saved on this phone") == true, $"{failure}: background sync reports authentication failure.");
             }
             Check(loginRequests == 0, "API client never follows a login redirect.");
             Check(writeRequests == 0, "Authentication failure never sends notes or files.");
@@ -90,8 +90,27 @@ internal static class AuthTests
             conn.AuthMode = "token";
             conn.User = "test-id";
             conn.Secret = "test-token";
-            Check((await SyncService.TestAsync(conn)).StartsWith("✅"), "A JSON API response passes connection test.");
+            Check((await SyncService.TestAsync(conn)).Ok, "A JSON API response passes connection test.");
             Check(tokenReceived, "Both documented Pangolin token headers are sent.");
+
+            Check(ConnectionSettings.Normalize("100.88.1.2") == "http://100.88.1.2:8126/quicknotes/", "A bare IP becomes a full backup address.");
+            Check(ConnectionSettings.Normalize("192.168.0.6:8099") == "http://192.168.0.6:8099/quicknotes/", "A typed port is kept.");
+            Check(ConnectionSettings.Normalize("https://apps.example.com/quicknotes") == "https://apps.example.com/quicknotes/", "A trailing slash is added.");
+            Check(ConnectionSettings.Normalize("not a url ::") == "", "Invalid addresses are ignored.");
+            Check(ConnectionSettings.ParseToken("", "https://pangolin.example.com/s/abc123.tok456") == ("abc123", "tok456"), "Share links are parsed.");
+            Check(ConnectionSettings.ParseToken("", "https://apps.example.com/x?p_token=abc123.tok456") == ("abc123", "tok456"), "p_token links are parsed.");
+            Check(ConnectionSettings.ParseToken(" abc123 ", " tok456 ") == ("abc123", "tok456"), "Separate token ID and token are trimmed.");
+
+            var headers = new HttpRequestMessage().Headers;
+            new ConnectionSettings { ServerUrl = "https://apps.example.com/quicknotes/", AuthMode = "basic", User = "u", Secret = "p" }
+                .Apply(headers, new Uri("http://100.88.1.2:8126/quicknotes/api/meta"));
+            Check(headers.Authorization is null, "Pangolin credentials are never sent to plain-HTTP backups.");
+
+            // Blocked main address → falls back to a working backup.
+            mode = "json";
+            var fallback = new ConnectionSettings { ServerUrl = "http://127.0.0.1:1/quicknotes/", BackupUrls = origin + "quicknotes/" };
+            var viaBackup = await SyncService.TestAsync(fallback);
+            Check(viaBackup.Ok && viaBackup.Message.Contains("via backup 1"), "Test falls back to the backup address.");
             using var safe = new ConnectionDiagnostics(new ConnectionSettings
             {
                 ServerUrl = "https://secret-user:secret-password@example.com/secret-path?token=secret-token",
