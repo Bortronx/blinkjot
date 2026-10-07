@@ -18,6 +18,11 @@ Voice notes are transcribed for you.
   capture buttons (Note is in the center).
 - A scrollable task list: open tasks first, completed tasks below with crossed-out
   titles and previews. Completed tasks stay available to reopen.
+- **Workspace** selector in the three-dot menu: the start screen and All tasks
+  show only the selected workspace. The selection survives restarts, and all
+  three capture buttons create tasks in that workspace.
+- **Created / Modified / Last opened** date and time appear only inside an open
+  task. Last opened shows the previous visit on this phone; reading is not an edit or upload.
 - Project, status and an accessible **checkmark** completion button fit on one
   row; long project/status names are shortened with an ellipsis. Completed tasks
   show a reopen icon in the same spot.
@@ -46,6 +51,28 @@ it on your phone. Allow "Install unknown apps" for your browser. Then:
 3. Tap **Allow background sync** if it's shown.
 
 Without a server, Jotdash is a fully local capture app.
+
+### Workspaces and task dates
+
+After the first sync, open **⋮ → Workspace** and choose a workspace. Cached tasks
+appear immediately; Jotdash also syncs and asks the server to refresh that
+workspace from Plane, downloading task text/status even for completed tasks.
+Attachments still download when opened, rather than using phone storage for
+every remote recording/video. On a failed/offline refresh, cached tasks remain
+available and the menu reports the problem; normal background sync retries later.
+
+New captures prefer the server's default project if it belongs to the workspace,
+then its Quick Notes project, then its first project. You can change project/status
+after capture as before. An empty workspace gets a Quick Notes project on the server.
+Existing tasks are never moved just by changing the menu selection. Before the
+first connection, unassigned offline notes belong to the server's default workspace.
+
+Created/Modified use the saved task timestamps (including Plane timestamps for
+imported tasks), displayed in the phone's local date/time format. Last opened is
+stored only on this phone, survives restarts/sync, and changes when the task is
+opened, not when it merely appears in a list. The screen shows the previous visit,
+and records the current visit for next time. Old/unread tasks say
+**First opening on this phone**.
 
 ### Connecting (any one option is enough)
 
