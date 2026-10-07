@@ -71,6 +71,44 @@ and [Links/access tokens](https://docs.pangolin.net/manage/access-control/links)
 documentation. API requests do not follow login redirects, and blocked sync
 leaves your notes and attachments queued locally.
 
+### Troubleshooting a connection
+
+In Settings, run **Test connection**, then long-press the error message to
+select and copy it into your support message. Failed tests/syncs include safe
+diagnostic text in the same selectable message, without extra buttons or menus.
+Reports include app/build version, platform/OS, network
+availability, auth mode, server-key presence, whether the address has the expected
+`/quicknotes/` path, HTTP status, response category, redirect presence and timing.
+They exclude credentials, URLs, response/request bodies and task/file IDs.
+The log is bounded and in memory; the next test/sync replaces it. Successful
+connections do not display diagnostics. Do not send screenshots of filled
+credential fields.
+
+Being signed into Pangolin in Chrome/Samsung Internet does not sign Jotdash in.
+Browser cookies are isolated from the app's WebView and native background HTTP
+client. Do not extract or paste browser session cookies; use resource credentials
+for unattended sync instead. Browser sign-in still works for downloading the APK.
+
+#### Use the Pangolin Android app instead of public-resource credentials
+
+For your own phone, a Pangolin **private resource** can avoid public-resource
+Header Auth or Link tokens. In Pangolin, define a private resource routed to the
+server's reachable address on TCP port `8126`, grant your user or role access,
+then sign into the official Pangolin Android app and connect the VPN. Set
+Jotdash's server address to
+`http://<private-resource-address>:8126/quicknotes/` and choose **No sign-in**.
+If the sync server has `QUICKNOTES_API_KEY` configured, enter that key in
+Jotdash's **Server key** field as well.
+
+The client does not make the public `apps.bortronx.com` resource bypass SSO.
+The server's port 8126 must be reachable through the private resource, and the
+Pangolin Android app must remain connected. Enable its Always-on VPN and
+unrestricted battery use if you want it to stay connected in the background.
+Official guides:
+[Pangolin Android client](https://docs.pangolin.net/manage/clients/platforms/android),
+[private resource destinations](https://docs.pangolin.net/manage/resources/private/destinations),
+[private resource access](https://docs.pangolin.net/manage/resources/private/authentication).
+
 Voice notes, photos and videos save their attachment and task together on the
 phone before navigating to the task. No network or server configuration is
 needed. If saving a recording fails, the recording is retained and **Retry save**

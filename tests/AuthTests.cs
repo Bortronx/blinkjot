@@ -7,6 +7,8 @@ internal static class AuthTests
 {
     public static async Task RunAsync(LocalStore store)
     {
+        Check(!new ConnectionSettings { ServerUrl = "/" }.IsSet, "A blank address normalized to a slash is not a server.");
+        Check(!new ConnectionSettings { ServerUrl = "file:///tmp/server" }.IsSet, "Only HTTP(S) server addresses are accepted.");
         using var portFinder = new TcpListener(IPAddress.Loopback, 0);
         portFinder.Start();
         int port = ((IPEndPoint)portFinder.LocalEndpoint).Port;
@@ -70,8 +72,11 @@ internal static class AuthTests
             foreach (string failure in new[] { "redirect", "html", "untyped-html", "denied" })
             {
                 mode = failure;
-                string result = await SyncService.TestAsync(conn);
+                string report = "";
+                string result = await SyncService.TestAsync(conn, text => report = text);
                 Check(result.Contains("account username/password is not HTTP Basic"), $"{failure}: actionable account-vs-Basic explanation.");
+                Check(report.Contains("Response: HTTP"), "Diagnostics include HTTP response metadata.");
+                Check(!report.Contains("test-user") && !report.Contains("test-password") && !report.Contains("<html>"), "Diagnostics omit credentials and page contents.");
                 var settings = new SettingsService();
                 await settings.SaveAsync(conn);
                 string? error = await new SyncService(store, settings).SyncAsync();
@@ -87,6 +92,18 @@ internal static class AuthTests
             conn.Secret = "test-token";
             Check((await SyncService.TestAsync(conn)).StartsWith("✅"), "A JSON API response passes connection test.");
             Check(tokenReceived, "Both documented Pangolin token headers are sent.");
+            using var safe = new ConnectionDiagnostics(new ConnectionSettings
+            {
+                ServerUrl = "https://secret-user:secret-password@example.com/secret-path?token=secret-token",
+                AuthMode = "secret-mode", User = "secret-user", Secret = "secret-password", ApiKey = "secret-key",
+            });
+            safe.Failure(new HttpRequestException("secret-token"));
+            Check(!safe.Report.Contains("secret-user") && !safe.Report.Contains("secret-password") &&
+                !safe.Report.Contains("secret-token") && !safe.Report.Contains("secret-key") &&
+                !safe.Report.Contains("secret-path") && !safe.Report.Contains("secret-mode"),
+                "Diagnostics omit credential-bearing URL parts, unknown auth labels and exception messages.");
+            for (int i = 0; i < 25; i++) safe.Failure(new IOException());
+            Check(safe.Report.Split("Failure type:").Length == 21, "Diagnostics retain at most twenty transport events.");
         }
         finally
         {
