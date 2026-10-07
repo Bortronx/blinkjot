@@ -18,7 +18,11 @@ Voice notes are transcribed for you.
   capture buttons (Note is in the center).
 - A scrollable task list: open tasks first, completed tasks below with crossed-out
   titles and previews. Completed tasks stay available to reopen.
-- **Mark as done** sits next to the task's status picker.
+- Project, status and an accessible **checkmark** completion button fit on one
+  row; long project/status names are shortened with an ellipsis. Completed tasks
+  show a reopen icon in the same spot.
+- A full-width **Close** button directly above Delete saves any pending typing
+  and returns home without completing or deleting the task.
 - New notes and media captures explicitly start as **To do**, regardless of the
   default status in the Plane project.
 - Pick the project and status *after* capturing; capturing never waits on that.
