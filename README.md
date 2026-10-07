@@ -19,6 +19,8 @@ Voice notes are transcribed for you.
 - A scrollable task list: open tasks first, completed tasks below with crossed-out
   titles and previews. Completed tasks stay available to reopen.
 - **Mark as done** sits next to the task's status picker.
+- New notes and media captures explicitly start as **To do**, regardless of the
+  default status in the Plane project.
 - Pick the project and status *after* capturing; capturing never waits on that.
 - Add more voice notes, photos or videos to any task.
 - Two-way sync. Tasks created or deleted in Plane show up on (or vanish from) the phone.
