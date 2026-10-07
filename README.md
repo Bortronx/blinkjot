@@ -14,7 +14,11 @@ Voice notes are transcribed for you.
 
 ## Features
 
-- Three-button home screen with your recent open tasks (title + first line).
+- Compact home header with a menu on the right, plus **Photo / Note / Voice**
+  capture buttons (Note is in the center).
+- A scrollable task list: open tasks first, completed tasks below with crossed-out
+  titles and previews. Completed tasks stay available to reopen.
+- **Mark as done** sits next to the task's status picker.
 - Pick the project and status *after* capturing; capturing never waits on that.
 - Add more voice notes, photos or videos to any task.
 - Two-way sync. Tasks created or deleted in Plane show up on (or vanish from) the phone.
@@ -36,6 +40,12 @@ it on your phone. Allow "Install unknown apps" for your browser. Then:
 3. Tap **Allow background sync** if it's shown.
 
 Without a server, Jotdash is a fully local capture app.
+
+Voice notes, photos and videos save their attachment and task together on the
+phone before navigating to the task. No network or server configuration is
+needed. If saving a recording fails, the recording is retained and **Retry save**
+is shown. Camera failures are shown on the capture screen rather than silently
+doing nothing.
 
 ## The sync server
 
@@ -77,6 +87,11 @@ dotnet run build-apk.cs      # → dist/jotdash.apk
 
 `build-apk.cs` also picks up a user-local SDK in `%LOCALAPPDATA%\dotnet-maui`
 if one is present (no admin rights needed).
+
+Run the offline-storage regression tests with
+`dotnet run --project tests/LocalStore.Tests.csproj`. They exercise voice,
+photo and video persistence without a server, failed-save retries, and
+completed-task ordering. CI runs these before building the APK.
 
 ### Signing and releases
 
