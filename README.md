@@ -47,6 +47,30 @@ it on your phone. Allow "Install unknown apps" for your browser. Then:
 
 Without a server, Jotdash is a fully local capture app.
 
+### Pangolin: account login is not HTTP Basic
+
+Your Pangolin website username/password cannot authenticate Jotdash's API
+requests as HTTP Basic. For background synchronization:
+
+1. In Pangolin, choose the resource for your server (for this deployment,
+   `apps.bortronx.com`) and create a **Link** / share link.
+2. Copy the **Access Token Usage** token ID and token, not the browser link.
+3. In Jotdash Settings, choose **Pangolin access token**, enter both values,
+   and use `https://apps.bortronx.com/quicknotes/` as the server address.
+4. Tap **Test connection**, then **Save**.
+
+Keep the token private. Choose an appropriate expiry; synchronization stops
+when it expires or is revoked. HTTP Basic only works with separately configured
+resource **Header Auth** credentials (or a different proxy that supports Basic).
+Do not weaken authentication on a shared resource just to bypass sign-in.
+At home, the LAN address plus **No sign-in** also works if the server is reachable;
+include the server key if configured.
+
+See Pangolin's [authentication](https://docs.pangolin.net/manage/resources/public/authentication)
+and [Links/access tokens](https://docs.pangolin.net/manage/access-control/links)
+documentation. API requests do not follow login redirects, and blocked sync
+leaves your notes and attachments queued locally.
+
 Voice notes, photos and videos save their attachment and task together on the
 phone before navigating to the task. No network or server configuration is
 needed. If saving a recording fails, the recording is retained and **Retry save**
