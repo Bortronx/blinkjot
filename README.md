@@ -54,7 +54,10 @@ Without a server, Jotdash is a fully local capture app.
 
 ### Workspaces and task dates
 
-After the first sync, open **⋮ → Workspace** and choose a workspace. Cached tasks
+Open **⋮ → Select workspace**, the large button at the top of the menu, and
+tap a workspace in the list. The current workspace is shown below the button.
+If no workspaces are cached yet, tap **Load workspaces** in the picker.
+Cached tasks
 appear immediately; Jotdash also syncs and asks the server to refresh that
 workspace from Plane, downloading task text/status even for completed tasks.
 Attachments still download when opened, rather than using phone storage for
