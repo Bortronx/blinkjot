@@ -219,3 +219,5 @@ An iOS version needs:
 ## License
 
 [MIT](LICENSE)
+
+The **Select workspace / project** button lets you pick an entire workspace or a single project. Only that selection is refreshed from Plane, and lists show only the downloaded tasks in it. New captures go to the selected project.
