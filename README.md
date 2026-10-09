@@ -54,21 +54,32 @@ Without a server, Jotdash is a fully local capture app.
 
 ### Workspaces and task dates
 
-Open **⋮ → Select workspace**, the large button at the top of the menu, and
-tap a workspace in the list. The current workspace is shown below the button.
+Open **⋮ → Select workspace / project**, the large button at the top of the
+menu. Choose an **entire workspace** row or one of its indented projects.
+The current workspace/project is shown below the button and survives restart.
 If no workspaces are cached yet, tap **Load workspaces** in the picker.
 Cached tasks
 appear immediately; Jotdash also syncs and asks the server to refresh that
-workspace from Plane, downloading task text/status even for completed tasks.
+selection from Plane, downloading task text/status even for completed tasks.
 Attachments still download when opened, rather than using phone storage for
 every remote recording/video. On a failed/offline refresh, cached tasks remain
 available and the menu reports the problem; normal background sync retries later.
 
-New captures prefer the server's default project if it belongs to the workspace,
+New captures use the selected project. For an entire workspace they prefer
+the server's default project if it belongs to the workspace,
 then its Quick Notes project, then its first project. You can change project/status
 after capture as before. An empty workspace gets a Quick Notes project on the server.
 Existing tasks are never moved just by changing the menu selection. Before the
 first connection, unassigned offline notes belong to the server's default workspace.
+If a selected project disappears, its cached scope stays selected and a warning
+asks you to choose another scope; the app never silently broadens the download.
+Local capture still works. Previously cached tasks stay on the phone when
+switching, but only the selected scope appears in lists. Sync also keeps cached
+tasks outside the scope up to date, without fetching unrelated uncached tasks.
+
+For v1.0.10+, deploy the updated QuickNotes server before updating the APK;
+see [the scoped sync API](docs/server-api.md). Older app versions continue
+working with the updated server.
 
 Created/Modified use the saved task timestamps (including Plane timestamps for
 imported tasks), displayed in the phone's local date/time format. Last opened is
@@ -219,5 +230,3 @@ An iOS version needs:
 ## License
 
 [MIT](LICENSE)
-
-The **Select workspace / project** button lets you pick an entire workspace or a single project. Only that selection is refreshed from Plane, and lists show only the downloaded tasks in it. New captures go to the selected project.
